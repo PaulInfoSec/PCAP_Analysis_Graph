@@ -10,13 +10,13 @@ from scapy.layers.inet import IP, TCP
 #for performance improvement. Input is pcap file output is a pickle file def createpickle_pcap(pcap_file_in, pickle_file_out):
 count = 0 interesting_packet_count = 0
 # Each element of the list is a dictionary that contains fields of interest # from the packet.
-24
+
 packets_for_analysis = []
 # Disregard LLC frames, type is the required ethernet data
 for (pkt_data, pkt_metadata,) in RawPcapReader(pcap_file_in):
-count += 1
-ether_pkt = Ether(pkt_data)
-if 'type' not in ether_pkt.fields:
+  count += 1
+  ether_pkt = Ether(pkt_data)
+  if 'type' not in ether_pkt.fields:
 continue
 if ether_pkt.type != 0x0800: # Only extract ipv4 continue
 ip_pkt = ether_pkt[IP]
@@ -28,7 +28,7 @@ continue
 # At this stage we have succesffuly filtered TCP packet with SYN flag # Increment number of packets
 interesting_packet_count += 1
 # This loop will only run for the first TCP packet if interesting_packet_count == 1:
-25
+
 
 # Appending both epoch + micro seconds to get epoch time in micro seconds to handle corect times
 first_pkt_timestamp = float(f"{pkt_metadata.sec}.{pkt_metadata.usec}")
@@ -45,7 +45,7 @@ pkt_data["dst_port"] = tcp_pkt.dport
 pkt_data['ordinal'] = last_pkt_ordinal pkt_data['relative_timestamp'] = this_pkt_relative_timestamp pkt_data['tcp_flags'] = str(tcp_pkt.flags)
 # Appending this dict pkt_data to a list. packets_for_analysis.append(pkt_data)
 # Opening a pickle file and sending the list of dictionaries in the file
-26
+
 
 with open(pickle_file_out, 'wb') as pickle_fd: pickle.dump(packets_for_analysis, pickle_fd)
 # small function to handle X axis presentation even split of range def choose_step_range(time):
@@ -64,7 +64,7 @@ index = 1
 new_dict = {}
 ## add in additional colours List of colors to be used for scatter plots. # individual colour for each source IP
 colors = ["b", "g", "r", "c", "m", "y", "k"]
-27
+
 
 # Initializing an empty plot for plotting, size of chart plt.figure(figsize=(15, 15))
 #logic to manage timestamps
@@ -84,7 +84,7 @@ plt.scatter(x=pkt_data["relative_timestamp"], y=pkt_data["dst_port"], label=src_
 index += 1 else:
 val = new_dict[src_ip]
 plt.scatter(x=pkt_data["relative_timestamp"], y=pkt_data["dst_port"], color=colors[val], s=200)
-28
+
 
 # Legend details
 plt.legend(loc=(1.04, 0.5), title="Source IP Address", fontsize=50) # set names for X and Y axis
@@ -102,7 +102,7 @@ plt.title("TCP SYN attempts over time", fontsize=50)
 ax = plt.gca()
 ax.tick_params(axis = 'both', which = 'major', labelsize = 25) ax.tick_params(axis = 'both', which = 'minor', labelsize = 25)
 plt.show()
-29
+
 
 createpickle_pcap(r"/Users/****/Desktop/pcap/Networkcapture2.pcap", "pcap_picklefile")
 #create_visual("pcap_picklefile")
